@@ -7,4 +7,5 @@ functions:
     lang: node18
     handler: ./generate-2fa
     image: julienfls/generate-2fa:latest
-
+    secrets:
+      - secret-pg

@@ -1,0 +1,14 @@
+auth:
+  postgresPassword: mysupersecurepassword
+  username: faas
+  password: faaspass
+  database: users
+
+primary:
+  persistence:
+    enabled: true
+    size: 1Gi
+    storageClass: "local-path"
+
+service:
+  type: ClusterIP
