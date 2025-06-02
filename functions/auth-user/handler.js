@@ -1,6 +1,6 @@
 'use strict'
 const { Pool } = require('pg')
-const crypto = require('crypto')
+const argon2 = require('argon2')
 const { authenticator } = require('otplib')
 const dotenv = require('dotenv')
 dotenv.config({ path: '/var/openfaas/secrets/secret-pg' })
@@ -12,10 +12,6 @@ const pool = new Pool({
   password: process.env.PGPASSWORD,
   port: parseInt(process.env.PGPORT),
 })
-
-function hashSHA256(password) {
-  return crypto.createHash('sha256').update(password).digest('hex')
-}
 
 module.exports = async (event, context) => {
   try {
@@ -32,9 +28,9 @@ module.exports = async (event, context) => {
     }
 
     const user = result.rows[0]
-    const passwordHash = hashSHA256(password)
+    const passwordValid = await argon2.verify(user.password_hash, password)
 
-    if (passwordHash !== user.password_hash) {
+    if (!passwordValid) {
       return context.status(401).fail('Invalid password')
     }
 

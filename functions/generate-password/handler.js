@@ -1,7 +1,8 @@
 'use strict'
 const { Pool } = require('pg')
-const crypto = require('crypto')
+const argon2 = require('argon2')
 const QRCode = require('qrcode')
+const crypto = require('crypto')
 const dotenv = require('dotenv')
 dotenv.config({ path: '/var/openfaas/secrets/secret-pg' })
 
@@ -20,18 +21,23 @@ module.exports = async (event, context) => {
   if (!username) {
     return context.status(400).fail('Missing username')
   }
+
   const result = await pool.query('SELECT * FROM users WHERE login = $1', [username])
-  // if user does not exist, create it
   if (result.rows.length === 0) {
     const password = generatePassword(24)
     const qrDataURL = await QRCode.toDataURL(password)
 
-    // insert user into database without TOTP secret
-    await pool.query('INSERT INTO users (login, password_hash, totp_secret) VALUES ($1, $2, $3)', [
-      username,
-      crypto.createHash('sha256').update(password).digest('hex'),
-      null // No TOTP secret for this user
-    ])
+    const passwordHash = await argon2.hash(password, {
+      type: argon2.argon2id,
+      memoryCost: 2 ** 16, // 64 MB
+      timeCost: 3,
+      parallelism: 1
+    })
+
+    await pool.query(
+      'INSERT INTO users (login, password_hash, totp_secret) VALUES ($1, $2, $3)',
+      [username, passwordHash, null]
+    )
 
     return context.status(200).succeed({
       password,
