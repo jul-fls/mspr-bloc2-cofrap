@@ -22,30 +22,40 @@ module.exports = async (event, context) => {
     return context.status(400).fail('Missing username')
   }
 
+  const password = generatePassword(24)
+  const qrDataURL = await QRCode.toDataURL(password)
+
+  const passwordHash = await argon2.hash(password, {
+    type: argon2.argon2id,
+    memoryCost: 2 ** 16,
+    timeCost: 3,
+    parallelism: 1
+  })
+
+  const now = new Date()
+
   const result = await pool.query('SELECT * FROM users WHERE login = $1', [username])
   if (result.rows.length === 0) {
-    const password = generatePassword(24)
-    const qrDataURL = await QRCode.toDataURL(password)
-
-    const passwordHash = await argon2.hash(password, {
-      type: argon2.argon2id,
-      memoryCost: 2 ** 16, // 64 MB
-      timeCost: 3,
-      parallelism: 1
-    })
-
+    // New user
     await pool.query(
-      'INSERT INTO users (login, password_hash, totp_secret) VALUES ($1, $2, $3)',
-      [username, passwordHash, null]
+      `INSERT INTO users (login, password_hash, totp_secret, last_password_update)
+       VALUES ($1, $2, $3, $4)`,
+      [username, passwordHash, null, now]
     )
-
-    return context.status(200).succeed({
-      password,
-      qr: qrDataURL
-    })
   } else {
-    return context.status(400).fail('User already exists')
+    // Existing user: update password only
+    await pool.query(
+      `UPDATE users
+       SET password_hash = $1, last_password_update = $2
+       WHERE login = $3`,
+      [passwordHash, now, username]
+    )
   }
+
+  return context.status(200).succeed({
+    password,
+    qr: qrDataURL
+  })
 }
 
 function generatePassword(length) {

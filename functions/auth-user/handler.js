@@ -45,9 +45,18 @@ module.exports = async (event, context) => {
       return context.status(401).fail('Invalid TOTP')
     }
 
-    const ageMs = Date.now() - new Date(user.created_at).getTime()
+    const now = Date.now()
     const sixMonthsMs = 1000 * 60 * 60 * 24 * 30 * 6
-    if (ageMs > sixMonthsMs) {
+
+    if (!user.last_password_update) {
+      console.warn(`User ${username} has no last_password_update set.`)
+      await pool.query('UPDATE users SET expired = 1 WHERE login = $1', [username])
+      return context.status(403).fail('Credentials expired')
+    }
+
+    const lastUpdateMs = new Date(user.last_password_update).getTime()
+    if (now - lastUpdateMs > sixMonthsMs) {
+      await pool.query('UPDATE users SET expired = 1 WHERE login = $1', [username])
       return context.status(403).fail('Credentials expired')
     }
 
