@@ -38,15 +38,17 @@ module.exports = async (event, context) => {
   if (result.rows.length === 0) {
     // New user
     await pool.query(
-      `INSERT INTO users (login, password_hash, totp_secret, last_password_update)
-       VALUES ($1, $2, $3, $4)`,
-      [username, passwordHash, null, now]
+      `INSERT INTO users (login, password_hash, totp_secret, last_password_update, expired)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [username, passwordHash, null, now, false]
     )
   } else {
-    // Existing user: update password only
+    // Existing user: update password and clear expired flag
     await pool.query(
       `UPDATE users
-       SET password_hash = $1, last_password_update = $2
+       SET password_hash = $1,
+           last_password_update = $2,
+           expired = 0
        WHERE login = $3`,
       [passwordHash, now, username]
     )
