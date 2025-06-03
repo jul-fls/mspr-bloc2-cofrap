@@ -17,6 +17,7 @@ jobs:
           OPENFAAS_USERNAME: ${{ secrets.OPENFAAS_USERNAME }}
           OPENFAAS_PASSWORD: ${{ secrets.OPENFAAS_PASSWORD }}
         run: |
+          echo "Current user: $(whoami)"
           echo "$OPENFAAS_PASSWORD" | faas-cli login --username "$OPENFAAS_USERNAME" --password-stdin --gateway "$OPENFAAS_URL"
 
       - name: Deploy all functions using update-function.sh
