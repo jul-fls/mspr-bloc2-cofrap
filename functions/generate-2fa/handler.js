@@ -17,7 +17,12 @@ module.exports = async (event, context) => {
   const body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body
   const { username } = body
   if (!username) {
-    return context.status(400).fail('Missing username')
+    return context.headers(
+        {
+          'Content-type': 'text/plain',
+          "Access-Control-Allow-Origin": "*"
+        }
+    ).status(400).fail('Missing username')
   }
   const result = await pool.query('SELECT * FROM users WHERE login = $1', [username])
   // if user does not exist, create it
@@ -36,12 +41,27 @@ module.exports = async (event, context) => {
     }
     ).catch((err) => {
       console.error(`Error updating TOTP secret for user ${username}:`, err)
-      return context.status(500).fail('Error updating TOTP secret')
+      return context.headers(
+        {
+          'Content-type': 'text/plain',
+          "Access-Control-Allow-Origin": "*"
+        }
+    ).status(500).fail('Error updating TOTP secret')
     })
 
 
-    return context.status(200).succeed({ secret, otpauth, qr })
+    return context.headers(
+        {
+          'Content-type': 'text/plain',
+          "Access-Control-Allow-Origin": "*"
+        }
+    ).status(200).succeed({ secret, otpauth, qr })
   } else {
-    return context.status(400).fail('User does not exist')
+    return context.headers(
+        {
+          'Content-type': 'text/plain',
+          "Access-Control-Allow-Origin": "*"
+        }
+    ).status(400).fail('User does not exist')
   }
 }

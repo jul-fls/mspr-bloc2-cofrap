@@ -19,7 +19,12 @@ module.exports = async (event, context) => {
   const { username } = body
 
   if (!username) {
-    return context.status(400).fail('Missing username')
+    return context.headers(
+        {
+          'Content-type': 'text/plain',
+          "Access-Control-Allow-Origin": "*"
+        }
+    ).status(400).fail('Missing username')
   }
 
   const password = generatePassword(24)
@@ -54,7 +59,12 @@ module.exports = async (event, context) => {
     )
   }
 
-  return context.status(200).succeed({
+  return context.headers(
+        {
+          'Content-type': 'text/plain',
+          "Access-Control-Allow-Origin": "*"
+        }
+    ).status(200).succeed({
     password,
     qr: qrDataURL
   })

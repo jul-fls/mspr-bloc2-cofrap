@@ -19,25 +19,45 @@ module.exports = async (event, context) => {
     const { username, password, totp } = body
 
     if (!username || !password || !totp) {
-      return context.status(400).fail('Missing username, password or TOTP')
+      return context.headers(
+        {
+          'Content-type': 'text/plain',
+          "Access-Control-Allow-Origin": "*"
+        }
+    ).status(400).fail('Missing username, password or TOTP')
     }
 
     const result = await pool.query('SELECT * FROM users WHERE login = $1', [username])
     if (result.rows.length === 0) {
-      return context.status(401).fail('User not found')
+      return context.headers(
+        {
+          'Content-type': 'text/plain',
+          "Access-Control-Allow-Origin": "*"
+        }
+    ).status(401).fail('User not found')
     }
 
     const user = result.rows[0]
     const passwordValid = await argon2.verify(user.password_hash, password)
 
     if (!passwordValid) {
-      return context.status(401).fail('Invalid password')
+      return context.headers(
+        {
+          'Content-type': 'text/plain',
+          "Access-Control-Allow-Origin": "*"
+        }
+    ).status(401).fail('Invalid password')
     }
 
     if (!user.totp_secret || typeof user.totp_secret !== 'string') {
       console.error('TOTP secret not found or invalid for user:', user.username)
       console.table(user)
-      return context.status(500).fail('TOTP secret not found or invalid for user')
+      return context.headers(
+        {
+          'Content-type': 'text/plain',
+          "Access-Control-Allow-Origin": "*"
+        }
+    ).status(500).fail('TOTP secret not found or invalid for user')
     }
 
     const totpValid = authenticator.check(totp, user.totp_secret)
@@ -51,7 +71,12 @@ module.exports = async (event, context) => {
     if (!user.last_password_update) {
       console.warn(`User ${username} has no last_password_update set.`)
       await pool.query('UPDATE users SET expired = 1 WHERE login = $1', [username])
-      return context.status(403).fail('Credentials expired')
+      return context.status(403).headers(
+        {
+          'Content-type': 'text/plain',
+          "Access-Control-Allow-Origin": "*"
+        }
+    ).fail('Credentials expired')
     }
 
     const lastUpdateMs = new Date(user.last_password_update).getTime()
@@ -60,9 +85,19 @@ module.exports = async (event, context) => {
       return context.status(403).fail('Credentials expired')
     }
 
-    return context.status(200).succeed('Auth successful')
+    return context.status(200).headers(
+        {
+          'Content-type': 'text/plain',
+          "Access-Control-Allow-Origin": "*"
+        }
+    ).succeed('Auth successful')
   } catch (err) {
     console.error(err)
-    return context.status(500).fail('Internal server error')
+    return context.headers(
+        {
+          'Content-type': 'text/plain',
+          "Access-Control-Allow-Origin": "*"
+        }
+    ).status(500).fail('Internal server error')
   }
 }
