@@ -19,6 +19,11 @@ FUNCTION_NAME="$1"
 YAML_FILE="${FUNCTION_NAME}.yaml"
 NAMESPACE="openfaas-fn"
 
+# List all the files in the current directory
+/usr/bin/echo -e "${GREEN}📂 Current directory contents:${NC}"
+/usr/bin/ls -l
+
+# Check if the YAML file exists
 if [ ! -f "$YAML_FILE" ]; then
   /usr/bin/echo -e "${RED}Error: ${YAML_FILE} not found.${NC}"
   exit 4
