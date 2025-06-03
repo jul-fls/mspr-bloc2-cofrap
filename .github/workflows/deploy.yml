@@ -17,8 +17,11 @@ jobs:
           OPENFAAS_USERNAME: ${{ secrets.OPENFAAS_USERNAME }}
           OPENFAAS_PASSWORD: ${{ secrets.OPENFAAS_PASSWORD }}
         run: |
-          echo "Current user: $(whoami)"
+          # echo "Current user: $(whoami)"
           echo "$OPENFAAS_PASSWORD" | faas-cli login --username "$OPENFAAS_USERNAME" --password-stdin --gateway "$OPENFAAS_URL"
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Deploy all functions using update-function.sh
         run: |
@@ -26,10 +29,10 @@ jobs:
           echo "Current directory: $(pwd)"
           echo "Listing files in current directory:"
           ls -la
-            echo "Changing directory to /home/user/mspr-bloc2-cofrap/tools"
-          cd /home/user/mspr-bloc2-cofrap/tools
+            echo "Changing directory to tools/"
+          cd tools/
             echo "Current directory after change: $(pwd)"
-            echo "Listing files in /home/user/mspr-bloc2-cofrap/tools:"
+            echo "Listing files in /root/mspr-bloc2-cofrap/tools:"
             ls -la
           chmod +x ./update-function.sh
           for file in ../functions/*.yaml; do
