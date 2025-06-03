@@ -70,7 +70,7 @@ module.exports = async (event, context) => {
 
     if (!user.last_password_update) {
       console.warn(`User ${username} has no last_password_update set.`)
-      await pool.query('UPDATE users SET expired = 1 WHERE login = $1', [username])
+      await pool.query('UPDATE users SET expired = TRUE WHERE login = $1', [username])
       return context.status(403).headers(
         {
           'Content-type': 'text/plain',
@@ -81,7 +81,7 @@ module.exports = async (event, context) => {
 
     const lastUpdateMs = new Date(user.last_password_update).getTime()
     if (now - lastUpdateMs > sixMonthsMs) {
-      await pool.query('UPDATE users SET expired = 1 WHERE login = $1', [username])
+      await pool.query('UPDATE users SET expired = TRUE WHERE login = $1', [username])
       return context.status(403).fail('Credentials expired')
     }
 

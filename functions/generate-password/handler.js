@@ -53,7 +53,7 @@ module.exports = async (event, context) => {
       `UPDATE users
        SET password_hash = $1,
            last_password_update = $2,
-           expired = 0
+           expired = FALSE
        WHERE login = $3`,
       [passwordHash, now, username]
     )
