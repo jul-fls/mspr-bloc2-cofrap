@@ -20,8 +20,6 @@ jobs:
           OPENFAAS_USERNAME: ${{ secrets.OPENFAAS_USERNAME }}
           OPENFAAS_PASSWORD: ${{ secrets.OPENFAAS_PASSWORD }}
         run: |
-          echo "Login to OpenFaaS..."
-          echo "$OPENFAAS_PASSWORD" | faas-cli login --username "$OPENFAAS_USERNAME" --password-stdin --gateway "$OPENFAAS_URL"
           echo 🚀 Starting deployment of all functions...
           echo "Current directory: $(pwd)"
           echo "Listing files in current directory:"

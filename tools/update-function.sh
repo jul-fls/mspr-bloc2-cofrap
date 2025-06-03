@@ -44,8 +44,15 @@ else
   /usr/bin/echo -e "${RED}⚠️ No old pods found for function ${FUNCTION_NAME}.${NC}"
 fi
 
+# Login to OpenFaaS
+/usr/bin/echo -e "${GREEN}🔑 Logging in to OpenFaaS...${NC}"
+echo "$OPENFAAS_PASSWORD" | /usr/local/bin/faas-cli login \
+  --gateway "${OPENFAAS_URL}" \
+  --username "${OPENFAAS_USERNAME}" \
+  --password-stdin
+
 /usr/bin/echo -e "${GREEN}🚀 Deploying $FUNCTION_NAME...${NC}"
-DEPLOY_OUTPUT=$(/usr/local/bin/faas-cli deploy -f "$YAML_FILE" --gateway "http://127.0.0.1:31112" 2>&1)
+DEPLOY_OUTPUT=$(/usr/local/bin/faas-cli deploy -f "$YAML_FILE" 2>&1)
 
 if /usr/bin/echo "$DEPLOY_OUTPUT" | grep -q "Deployed."; then
   /usr/bin/echo -e "${GREEN}✅ Deployment successful!${NC}"
