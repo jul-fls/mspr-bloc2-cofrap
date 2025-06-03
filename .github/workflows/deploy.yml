@@ -26,5 +26,5 @@ jobs:
           for file in ../functions/*.yaml; do
             func=$(basename "$file" .yaml)
             echo "🚀 Updating $func..."
-            ./update-function.sh "$func"}
+            ./update-function.sh "$func"
           done
