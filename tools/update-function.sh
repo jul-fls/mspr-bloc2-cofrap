@@ -10,10 +10,10 @@ NC='\033[0m' # No Color
 # Check for function name
 if [ -z "$1" ]; then
   /usr/bin/echo -e "${RED}Usage: $0 <function-name>${NC}"
-  exit 1
+  exit 2
 fi
 
-cd ../functions || { /usr/bin/echo -e "${RED}Error: Could not change directory to 'functions'.${NC}"; exit 1; }
+cd ../functions || { /usr/bin/echo -e "${RED}Error: Could not change directory to 'functions'.${NC}"; exit 3; }
 
 FUNCTION_NAME="$1"
 YAML_FILE="${FUNCTION_NAME}.yaml"
@@ -21,7 +21,7 @@ NAMESPACE="openfaas-fn"
 
 if [ ! -f "$YAML_FILE" ]; then
   /usr/bin/echo -e "${RED}Error: ${YAML_FILE} not found.${NC}"
-  exit 1
+  exit 4
 fi
 
 /usr/bin/echo -e "${GREEN}🛠 Building $FUNCTION_NAME...${NC}"
@@ -47,5 +47,5 @@ if /usr/bin/echo "$DEPLOY_OUTPUT" | grep -q "Deployed."; then
 else
   /usr/bin/echo -e "${RED}❌ Deployment failed!${NC}"
   /usr/bin/echo "$DEPLOY_OUTPUT"
-  exit 1
+  exit 5
 fi
