@@ -24,6 +24,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Deploy all functions using update-function.sh
+        env:
+          OPENFAAS_URL: ${{ secrets.OPENFAAS_URL }}
+          OPENFAAS_USERNAME: ${{ secrets.OPENFAAS_USERNAME }}
+          OPENFAAS_PASSWORD: ${{ secrets.OPENFAAS_PASSWORD }}
         run: |
           echo 🚀 Starting deployment of all functions...
           echo "Current directory: $(pwd)"
