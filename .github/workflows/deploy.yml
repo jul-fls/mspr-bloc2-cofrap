@@ -9,19 +9,16 @@ jobs:
   deploy:
     runs-on: self-hosted
 
-    defaults:
-      run:
-        working-directory: /home/user/mspr-bloc2-cofrap/tools
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Deploy all functions using update-function.sh
         run: |
+          cd /home/user/mspr-bloc2-cofrap/tools
           chmod +x ./update-function.sh
           for file in ../functions/*.yaml; do
             func=$(basename "$file" .yaml)
-            echo "🚀 Updating $func"
-            ./update-function.sh "$func"
+            echo "🚀 Updating $func..."
+            ./update-function.sh "$func" || { echo "❌ Failed to update $func"; exit 1; }
           done
