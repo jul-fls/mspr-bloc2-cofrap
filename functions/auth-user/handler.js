@@ -14,6 +14,16 @@ const pool = new Pool({
 })
 
 module.exports = async (event, context) => {
+  if (event.method === 'OPTIONS') {
+    return context
+      .status(200)
+      .headers({
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      })
+      .succeed('')
+  }
   try {
     const body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body
     const { username, password, totp } = body
