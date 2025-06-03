@@ -45,7 +45,7 @@ else
 fi
 
 /usr/bin/echo -e "${GREEN}🚀 Deploying $FUNCTION_NAME...${NC}"
-DEPLOY_OUTPUT=$(/usr/local/bin/faas-cli deploy -f "$YAML_FILE" 2>&1)
+DEPLOY_OUTPUT=$(/usr/local/bin/faas-cli deploy -f "$YAML_FILE" --gateway "http://127.0.0.1:31112" 2>&1)
 
 if /usr/bin/echo "$DEPLOY_OUTPUT" | grep -q "Deployed."; then
   /usr/bin/echo -e "${GREEN}✅ Deployment successful!${NC}"
