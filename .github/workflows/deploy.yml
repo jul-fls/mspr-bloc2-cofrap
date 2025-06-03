@@ -11,6 +11,12 @@ jobs:
 
     steps:
 
+      - name: Log in to OpenFaaS securely
+        env:
+          OPENFAAS_PASSWORD: ${{ secrets.OPENFAAS_PASSWORD }}
+        run: |
+          echo "$OPENFAAS_PASSWORD" | faas-cli login --password-stdin
+
       - name: Deploy all functions using update-function.sh
         run: |
           echo 🚀 Starting deployment of all functions...
