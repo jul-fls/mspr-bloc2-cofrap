@@ -50,7 +50,7 @@ export function RegisterForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-6 m-5", className)} {...props}>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
@@ -60,7 +60,7 @@ export function RegisterForm({
               </div>
               <span className="sr-only">COFRAP</span>
             </div>
-            <h1 className="text-xl font-bold">Bienvenue à COFRAP</h1>
+            <h1 className="text-xl font-bold">S'inscrire</h1>
             <div className="text-center text-sm">
               Vous avez déjà un compte ?{" "}
               <Button
@@ -96,18 +96,19 @@ export function RegisterForm({
                 onChange={(e) => setUsername(e.target.value)}
                 required
                 disabled={!!generatedPassword}
+                className="disabled:opacity-100"
               />
             </div>
 
             {/* Mot de passe généré */}
             {generatedPassword && qrCode && (
               <div className="flex flex-col gap-4">
-                <Alert className="border-green-500 bg-green-50">
-                  <AlertDescription className="text-green-800">
+                <Alert className="border-green-500 bg-green-100">
+                  <AlertDescription className="text-green-950">
                     <div className="font-semibold">
                       Votre mot de passe généré :
                     </div>
-                    <div className="mt-2 p-2 bg-gray-100 rounded-md overflow-x-auto">
+                    <div className="mt-2 p-2 bg-green-300 rounded-md overflow-x-auto">
                       <code>{generatedPassword}</code>
                     </div>
                     <div className="mt-2">
@@ -117,7 +118,7 @@ export function RegisterForm({
                 </Alert>
 
                 {/* QR Code mot de passe */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-3">
                   <div className="flex flex-col items-center gap-2">
                     <Label>Mot de passe</Label>
                     <img
@@ -129,7 +130,7 @@ export function RegisterForm({
 
                   {/* QR Code secret 2FA */}
                   {totpQrCode && (
-                    <div className="flex flex-col items-center">
+                    <div className="flex flex-col items-center gap-2">
                       <Label>Code secret 2FA</Label>
                       <img
                         src={totpQrCode}
@@ -137,11 +138,8 @@ export function RegisterForm({
                         className="w-48 h-48"
                       />
                       {totpSecret && (
-                        <div className="mt-2 text-center">
-                          <div className="text-sm font-semibold">
-                            Code secret 2FA :
-                          </div>
-                          <code className="p-1 bg-gray-100 rounded text-sm">
+                        <div>
+                          <code className="p-1 bg-gray-200 rounded text-sm">
                             {totpSecret}
                           </code>
                         </div>

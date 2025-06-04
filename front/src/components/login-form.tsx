@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginUser } from "@/lib/api";
 import { Alert, AlertDescription } from "./ui/alert";
+import { useAuth } from "@/contexts/auth-context";
 
 interface LoginFormProps extends React.ComponentProps<"div"> {
   onRegisterClick?: () => void;
@@ -21,11 +22,16 @@ export function LoginForm({
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [totp, setTotp] = useState("");
+  const { login } = useAuth();
 
   const loginMutation = useMutation({
     mutationFn: loginUser,
     onSuccess: () => {
-      alert("Connexion réussie!");
+      // Utiliser les données du formaire pour créer l'utilisateur
+      const user = {
+        username: username,
+      };
+      login(user);
     },
   });
 
@@ -35,7 +41,7 @@ export function LoginForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-6 m-5", className)} {...props}>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
@@ -45,7 +51,7 @@ export function LoginForm({
               </div>
               <span className="sr-only">COFRAP</span>
             </div>
-            <h1 className="text-xl font-bold">Bienvenue à COFRAP</h1>
+            <h1 className="text-xl font-bold">Se connecter</h1>
             <div className="text-center text-sm">
               Vous n'avez pas de compte ?{" "}
               <Button
