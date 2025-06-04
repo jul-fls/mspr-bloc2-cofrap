@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { GalleryVerticalEnd } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
@@ -9,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { loginUser } from "@/lib/api";
 import { Alert, AlertDescription } from "./ui/alert";
 import { useAuth } from "@/contexts/auth-context";
+import { Logo } from "./logo";
 
 interface LoginFormProps extends React.ComponentProps<"div"> {
   onRegisterClick?: () => void;
@@ -45,12 +45,7 @@ export function LoginForm({
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
-            <div className="flex flex-col items-center gap-2 font-medium">
-              <div className="flex size-8 items-center justify-center rounded-md">
-                <GalleryVerticalEnd className="size-6" />
-              </div>
-              <span className="sr-only">COFRAP</span>
-            </div>
+            <Logo />
             <h1 className="text-xl font-bold">Se connecter</h1>
             <div className="text-center text-sm">
               Vous n'avez pas de compte ?{" "}

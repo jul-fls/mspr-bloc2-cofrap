@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { GalleryVerticalEnd } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
@@ -8,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { generatePassword, generate2FA } from "@/lib/api";
 import { Alert, AlertDescription } from "./ui/alert";
+import { Logo } from "./logo";
 
 interface RegisterFormProps extends React.ComponentProps<"div"> {
   onLoginClick?: () => void;
@@ -54,12 +54,7 @@ export function RegisterForm({
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
-            <div className="flex flex-col items-center gap-2 font-medium">
-              <div className="flex size-8 items-center justify-center rounded-md">
-                <GalleryVerticalEnd className="size-6" />
-              </div>
-              <span className="sr-only">COFRAP</span>
-            </div>
+            <Logo />
             <h1 className="text-xl font-bold">S'inscrire</h1>
             <div className="text-center text-sm">
               Vous avez déjà un compte ?{" "}

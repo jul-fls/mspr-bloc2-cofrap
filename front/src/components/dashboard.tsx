@@ -1,8 +1,9 @@
-import { GalleryVerticalEnd, LogOut, User } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/lib/utils";
+import { Logo } from "./logo";
 
 export function Dashboard({
   className,
@@ -17,12 +18,7 @@ export function Dashboard({
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2">
-        <div className="flex flex-col items-center gap-2 font-medium">
-          <div className="flex size-8 items-center justify-center rounded-md">
-            <GalleryVerticalEnd className="size-6" />
-          </div>
-          <span className="sr-only">COFRAP</span>
-        </div>
+        <Logo />
         <h1 className="text-xl font-bold">Connexion réussie</h1>
       </div>
 
