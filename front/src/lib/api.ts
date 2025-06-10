@@ -1,0 +1,127 @@
+// Types for API requests and responses
+export interface LoginRequest {
+  username: string;
+  password: string;
+  totp: string;
+}
+
+export interface Generate2FARequest {
+  username: string;
+}
+
+export interface Generate2FAResponse {
+  secret: string;
+  otpauth: string;
+  qr: string;
+}
+
+export interface GeneratePasswordRequest {
+  username: string;
+}
+
+export interface GeneratePasswordResponse {
+  password: string;
+  qr: string;
+}
+
+// User login
+export async function loginUser(data: LoginRequest): Promise<void> {
+  const response = await fetch(
+    "https://openfaas.flusin.fr/function/auth-user",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    const errorCode = response.status;
+    let errorMessage = "Une erreur est survenue";
+
+    switch (errorCode) {
+      case 400:
+        errorMessage = "Il manque un paramètre";
+        break;
+      case 401:
+        errorMessage = "Identifiants invalides";
+        break;
+      case 500:
+        errorMessage = "Code 2FA invalide";
+        break;
+      case 403:
+        errorMessage =
+          "Mot de passe expiré, il faut générer un nouveau mot de passe";
+        break;
+    }
+
+    throw new Error(errorMessage);
+  }
+}
+
+// Generate 2FA secret and QR code
+export async function generate2FA(
+  data: Generate2FARequest
+): Promise<Generate2FAResponse> {
+  const response = await fetch(
+    "https://openfaas.flusin.fr/function/generate-2fa",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    const errorCode = response.status;
+    let errorMessage = "Une erreur est survenue";
+
+    switch (errorCode) {
+      case 400:
+        errorMessage = "L'utilisateur n'existe pas";
+        break;
+      case 500:
+        errorMessage = "Erreur serveur";
+        break;
+    }
+
+    throw new Error(errorMessage);
+  }
+
+  return await response.json();
+}
+
+// Generate a new password and QR code
+export async function generatePassword(
+  data: GeneratePasswordRequest
+): Promise<GeneratePasswordResponse> {
+  const response = await fetch(
+    "https://openfaas.flusin.fr/function/generate-password",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    const errorCode = response.status;
+    let errorMessage = "Une erreur est survenue";
+
+    switch (errorCode) {
+      case 400:
+        errorMessage = "Il manque un paramètre";
+        break;
+    }
+
+    throw new Error(errorMessage);
+  }
+
+  return await response.json();
+}
