@@ -19,12 +19,11 @@ export function RegisterForm({
   ...props
 }: Readonly<RegisterFormProps>) {
   const [username, setUsername] = useState("");
-  const [generatedPassword, setGeneratedPassword] = useState<string | null>(
-    null
-  );
+  const [generatedPassword, setGeneratedPassword] = useState<string | null>(null);
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [totpQrCode, setTotpQrCode] = useState<string | null>(null);
   const [totpSecret, setTotpSecret] = useState<string | null>(null);
+  const [step, setStep] = useState<1 | 2>(1); // step 1: password QR, step 2: 2FA QR
 
   const totpMutation = useMutation({
     mutationFn: generate2FA,
@@ -39,7 +38,7 @@ export function RegisterForm({
     onSuccess: (data) => {
       setGeneratedPassword(data.password);
       setQrCode(data.qr);
-      // Générer le TOTP après inscription réussie
+      setStep(1); // reset to step 1
       totpMutation.mutate({ username });
     },
   });
@@ -68,7 +67,6 @@ export function RegisterForm({
             </div>
           </div>
 
-          {/* Alert */}
           {registerMutation.error && (
             <Alert variant="destructive">
               <AlertDescription>
@@ -79,7 +77,6 @@ export function RegisterForm({
             </Alert>
           )}
 
-          {/* Formulaire champ nom d'utilisateur */}
           <div className="flex flex-col gap-6">
             <div className="grid gap-3">
               <Label htmlFor="username">Nom d'utilisateur</Label>
@@ -95,7 +92,6 @@ export function RegisterForm({
               />
             </div>
 
-            {/* Mot de passe généré */}
             {generatedPassword && qrCode && (
               <div className="flex flex-col gap-4">
                 <Alert className="border-green-500 bg-green-100">
@@ -112,19 +108,20 @@ export function RegisterForm({
                   </AlertDescription>
                 </Alert>
 
-                {/* QR Code mot de passe */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-3">
-                  <div className="flex flex-col items-center gap-2">
-                    <Label>Mot de passe</Label>
-                    <img
-                      src={qrCode}
-                      alt="QR Code du mot de passe"
-                      className="w-48 h-48"
-                    />
-                  </div>
+                {/* QR Code Display Toggle */}
+                <div className="flex flex-col items-center gap-6 pb-3">
+                  {step === 1 && (
+                    <div className="flex flex-col items-center gap-2">
+                      <Label>Mot de passe</Label>
+                      <img
+                        src={qrCode}
+                        alt="QR Code du mot de passe"
+                        className="w-48 h-48"
+                      />
+                    </div>
+                  )}
 
-                  {/* QR Code secret 2FA */}
-                  {totpQrCode && (
+                  {step === 2 && totpQrCode && (
                     <div className="flex flex-col items-center gap-2">
                       <Label>Code secret 2FA</Label>
                       <img
@@ -142,14 +139,27 @@ export function RegisterForm({
                     </div>
                   )}
 
-                  {!totpQrCode && totpMutation.isPending && (
-                    <div className="flex flex-col items-center justify-center h-48">
-                      <div className="text-center">
-                        Génération du code 2FA en cours...
-                      </div>
+                  {step === 2 && totpMutation.isPending && !totpQrCode && (
+                    <div className="text-center h-48 flex items-center justify-center">
+                      Génération du code 2FA en cours...
                     </div>
                   )}
+
+                  {/* Step Navigation Buttons */}
+                  <div className="flex gap-4">
+                    {step === 2 && (
+                      <Button variant="secondary" onClick={() => setStep(1)}>
+                        ← Retour
+                      </Button>
+                    )}
+                    {step === 1 && totpQrCode && (
+                      <Button onClick={() => setStep(2)}>
+                        Suivant →
+                      </Button>
+                    )}
+                  </div>
                 </div>
+
                 <Button onClick={onLoginClick}>
                   Aller à la page de connexion
                 </Button>

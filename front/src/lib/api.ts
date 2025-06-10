@@ -1,3 +1,5 @@
+const FUNCTIONS_URL = import.meta.env.VITE_FUNCTIONS_URL;
+
 // Types for API requests and responses
 export interface LoginRequest {
   username: string;
@@ -27,7 +29,7 @@ export interface GeneratePasswordResponse {
 // User login
 export async function loginUser(data: LoginRequest): Promise<void> {
   const response = await fetch(
-    "https://openfaas.flusin.fr/function/auth-user",
+    `${FUNCTIONS_URL}/auth-user`,
     {
       method: "POST",
       headers: {
@@ -66,7 +68,7 @@ export async function generate2FA(
   data: Generate2FARequest
 ): Promise<Generate2FAResponse> {
   const response = await fetch(
-    "https://openfaas.flusin.fr/function/generate-2fa",
+    `${FUNCTIONS_URL}/generate-2fa`,
     {
       method: "POST",
       headers: {
@@ -100,7 +102,7 @@ export async function generatePassword(
   data: GeneratePasswordRequest
 ): Promise<GeneratePasswordResponse> {
   const response = await fetch(
-    "https://openfaas.flusin.fr/function/generate-password",
+    `${FUNCTIONS_URL}/generate-password`,
     {
       method: "POST",
       headers: {
