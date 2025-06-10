@@ -28,13 +28,15 @@ jobs:
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
+        env:
+          VITE_FUNCTIONS_URL: https://openfaas.flusin.fr/function
         with:
           context: ./front
           file: ./front/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository }}/front:latest
 
-  deploy:
+  deploy-openfaas-functions:
     runs-on: self-hosted
     needs: build-frontend
 
