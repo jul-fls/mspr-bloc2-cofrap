@@ -36,7 +36,7 @@ jobs:
             ghcr.io/${{ github.repository }}/front:latest
             ghcr.io/${{ github.repository }}/front:${{ github.sha }}
           build-args: |
-            VITE_FUNCTIONS_URL=https://openfaas.flusin.fr/function
+            VITE_FUNCTIONS_URL=${{ secrets.VITE_FUNCTIONS_URL }}
 
   deploy-frontend:
     runs-on: k8s-cp
