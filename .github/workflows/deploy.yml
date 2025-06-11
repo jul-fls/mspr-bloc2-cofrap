@@ -47,11 +47,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Inject commit SHA and apply manifests
+        env:
+          GIT_COMMIT_SHA: ${{ github.sha }}
         run: |
-          echo "🚀 Deploying frontend using commit SHA: ${{ github.sha }}"
-          export GIT_COMMIT_SHA=${{ github.sha }}
-          find ./front/k8s-manifests -type f -name '*.yaml' \
-            -exec sh -c 'envsubst < "$1" | kubectl apply -f -' _ {} \;
+          echo "🚀 Deploying frontend using commit SHA: $GIT_COMMIT_SHA"
+          find ./front/k8s-manifests -type f -name '*.yaml' -print0 | \
+            xargs -0 cat | envsubst | kubectl apply -f -
 
   deploy-openfaas-functions:
     runs-on: k8s-cp
