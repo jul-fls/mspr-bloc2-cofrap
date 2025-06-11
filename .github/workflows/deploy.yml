@@ -28,8 +28,8 @@ jobs:
 
       - name: Build and push Docker image with two tags
         uses: docker/build-push-action@v5
-        env:
-          VITE_FUNCTIONS_URL: https://openfaas.flusin.fr/function
+        # env:
+        #   VITE_FUNCTIONS_URL: https://openfaas.flusin.fr/function
         with:
           context: ./front
           file: ./front/Dockerfile
@@ -37,6 +37,8 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository }}/front:latest
             ghcr.io/${{ github.repository }}/front:${{ github.sha }}
+          build-args: |
+            VITE_FUNCTIONS_URL=https://openfaas.flusin.fr/function
 
   deploy-frontend:
     runs-on: k8s-cp
