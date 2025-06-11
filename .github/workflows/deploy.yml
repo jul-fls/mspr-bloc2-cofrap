@@ -26,7 +26,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push Docker image with two tags
         uses: docker/build-push-action@v5
         env:
           VITE_FUNCTIONS_URL: https://openfaas.flusin.fr/function
@@ -34,10 +34,27 @@ jobs:
           context: ./front
           file: ./front/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/front:latest
+          tags: |
+            ghcr.io/${{ github.repository }}/front:latest
+            ghcr.io/${{ github.repository }}/front:${{ github.sha }}
+
+  deploy-frontend:
+    runs-on: k8s-cp
+    needs: build-frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Inject commit SHA and apply manifests
+        run: |
+          echo "🚀 Deploying frontend using commit SHA: ${{ github.sha }}"
+          export GIT_COMMIT_SHA=${{ github.sha }}
+          find ./front/k8s-manifests -type f -name '*.yaml' \
+            -exec sh -c 'envsubst < "$1" | kubectl apply -f -' _ {} \;
 
   deploy-openfaas-functions:
-    runs-on: self-hosted
+    runs-on: k8s-cp
     needs: build-frontend
 
     steps:
@@ -51,14 +68,7 @@ jobs:
           OPENFAAS_PASSWORD: ${{ secrets.OPENFAAS_PASSWORD }}
         run: |
           echo 🚀 Starting deployment of all functions...
-          echo "Current directory: $(pwd)"
-          echo "Listing files in current directory:"
-          ls -la
-          echo "Changing directory to tools/"
           cd tools/
-          echo "Current directory after change: $(pwd)"
-          echo "Listing files in /root/mspr-bloc2-cofrap/tools:"
-          ls -la
           chmod +x ./update-function.sh
           for file in ../functions/*.yaml; do
             func=$(basename "$file" .yaml)
