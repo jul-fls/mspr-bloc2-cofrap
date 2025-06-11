@@ -28,8 +28,6 @@ jobs:
 
       - name: Build and push Docker image with two tags
         uses: docker/build-push-action@v5
-        # env:
-        #   VITE_FUNCTIONS_URL: https://openfaas.flusin.fr/function
         with:
           context: ./front
           file: ./front/Dockerfile
