@@ -51,7 +51,7 @@ jobs:
           GIT_COMMIT_SHA: ${{ github.sha }}
         run: |
           echo "🚀 Deploying frontend using commit SHA: $GIT_COMMIT_SHA"
-          find ./front/k8s-manifests -type f -name '*.yaml' -print0 | \
+          find ./front/k8s-manifests -type f -name '*.yml' -print0 | \
             xargs -0 cat | envsubst | kubectl apply -f -
 
   deploy-openfaas-functions:
