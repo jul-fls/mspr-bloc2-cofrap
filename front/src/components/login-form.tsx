@@ -3,12 +3,11 @@ import { useMutation } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { loginUser } from "@/lib/api";
 import { Alert, AlertDescription } from "./ui/alert";
 import { useAuth } from "@/contexts/auth-context";
-import { Logo } from "./logo";
+import { FormHeader } from "./form/form-header";
+import { FormField } from "./form/form-field";
 
 interface LoginFormProps extends React.ComponentProps<"div"> {
   onRegisterClick?: () => void;
@@ -27,10 +26,7 @@ export function LoginForm({
   const loginMutation = useMutation({
     mutationFn: loginUser,
     onSuccess: () => {
-      // Utiliser les données du formaire pour créer l'utilisateur
-      const user = {
-        username: username,
-      };
+      const user = { username };
       login(user);
     },
   });
@@ -44,22 +40,13 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6 m-5", className)} {...props}>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col items-center gap-2">
-            <Logo />
-            <h1 className="text-xl font-bold">Se connecter</h1>
-            <div className="text-center text-sm">
-              Vous n'avez pas de compte ?{" "}
-              <Button
-                variant="link"
-                className="p-0 h-auto"
-                onClick={() => onRegisterClick?.()}
-              >
-                Créer un compte
-              </Button>
-            </div>
-          </div>
+          <FormHeader
+            title="Se connecter"
+            linkText="Vous n'avez pas de compte ?"
+            linkLabel="Créer un compte"
+            onLinkClick={onRegisterClick}
+          />
 
-          {/* Alert */}
           {loginMutation.error && (
             <Alert variant="destructive">
               <AlertDescription>
@@ -71,40 +58,33 @@ export function LoginForm({
           )}
 
           <div className="flex flex-col gap-6">
-            <div className="grid gap-3">
-              <Label htmlFor="username">Nom d'utilisateur</Label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="Votre nom d'utilisateur"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor="password">Mot de passe</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+            <FormField
+              id="username"
+              label="Nom d'utilisateur"
+              placeholder="Votre nom d'utilisateur"
+              value={username}
+              onChange={setUsername}
+              required
+            />
 
-            <div className="grid gap-3">
-              <Label htmlFor="totp">Code d'authentification (2FA)</Label>
-              <Input
-                id="totp"
-                type="text"
-                placeholder="Entrez le code 2FA"
-                value={totp}
-                onChange={(e) => setTotp(e.target.value)}
-                required
-              />
-            </div>
+            <FormField
+              id="password"
+              label="Mot de passe"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={setPassword}
+              required
+            />
+
+            <FormField
+              id="totp"
+              label="Code d'authentification (2FA)"
+              placeholder="Entrez le code 2FA"
+              value={totp}
+              onChange={setTotp}
+              required
+            />
 
             <Button
               type="submit"
