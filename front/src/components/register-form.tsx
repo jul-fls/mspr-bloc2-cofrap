@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,9 @@ export function RegisterForm({
   ...props
 }: Readonly<RegisterFormProps>) {
   const [username, setUsername] = useState("");
-  const [generatedPassword, setGeneratedPassword] = useState<string | null>(null);
+  const [generatedPassword, setGeneratedPassword] = useState<string | null>(
+    null
+  );
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [totpQrCode, setTotpQrCode] = useState<string | null>(null);
   const [totpSecret, setTotpSecret] = useState<string | null>(null);
@@ -149,12 +152,14 @@ export function RegisterForm({
                   <div className="flex gap-4">
                     {step === 2 && (
                       <Button variant="secondary" onClick={() => setStep(1)}>
-                        ← Retour
+                        <ArrowLeft className="w-4 h-4" />
+                        Retour
                       </Button>
                     )}
                     {step === 1 && totpQrCode && (
                       <Button onClick={() => setStep(2)}>
-                        Suivant →
+                        Suivant
+                        <ArrowRight className="w-4 h-4" />
                       </Button>
                     )}
                   </div>
