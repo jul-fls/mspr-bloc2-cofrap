@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { generatePassword, generate2FA } from "@/lib/api";
 import { Alert, AlertDescription } from "./ui/alert";
-import { Logo } from "./logo";
+import { FormHeader } from "./form/form-header";
+import { FormField } from "./form/form-field";
+import { QRCodeDisplay } from "./form/qr-code-display";
+import { StepNavigation } from "./form/step-navigation";
 
 interface RegisterFormProps extends React.ComponentProps<"div"> {
   onLoginClick?: () => void;
@@ -23,16 +23,16 @@ export function RegisterForm({
   const [generatedPassword, setGeneratedPassword] = useState<string | null>(
     null
   );
-  const [qrCode, setQrCode] = useState<string | null>(null);
-  const [totpQrCode, setTotpQrCode] = useState<string | null>(null);
+  const [passwordQrCode, setPasswordQrCode] = useState<string | null>(null);
   const [totpSecret, setTotpSecret] = useState<string | null>(null);
+  const [totpQrCode, setTotpQrCode] = useState<string | null>(null);
   const [step, setStep] = useState<1 | 2>(1); // step 1: password QR, step 2: 2FA QR
 
   const totpMutation = useMutation({
     mutationFn: generate2FA,
     onSuccess: (data) => {
-      setTotpQrCode(data.qr);
       setTotpSecret(data.secret);
+      setTotpQrCode(data.qr);
     },
   });
 
@@ -40,8 +40,8 @@ export function RegisterForm({
     mutationFn: generatePassword,
     onSuccess: (data) => {
       setGeneratedPassword(data.password);
-      setQrCode(data.qr);
-      setStep(1); // reset to step 1
+      setPasswordQrCode(data.qr);
+      setStep(1);
       totpMutation.mutate({ username });
     },
   });
@@ -55,20 +55,12 @@ export function RegisterForm({
     <div className={cn("flex flex-col gap-6 m-5", className)} {...props}>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col items-center gap-2">
-            <Logo />
-            <h1 className="text-xl font-bold">S'inscrire</h1>
-            <div className="text-center text-sm">
-              Vous avez déjà un compte ?{" "}
-              <Button
-                variant="link"
-                className="p-0 h-auto"
-                onClick={() => onLoginClick?.()}
-              >
-                Se connecter
-              </Button>
-            </div>
-          </div>
+          <FormHeader
+            title="S'inscrire"
+            linkText="Vous avez déjà un compte ?"
+            linkLabel="Se connecter"
+            onLinkClick={onLoginClick}
+          />
 
           {registerMutation.error && (
             <Alert variant="destructive">
@@ -81,21 +73,18 @@ export function RegisterForm({
           )}
 
           <div className="flex flex-col gap-6">
-            <div className="grid gap-3">
-              <Label htmlFor="username">Nom d'utilisateur</Label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="Votre nom d'utilisateur"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                disabled={!!generatedPassword}
-                className="disabled:opacity-100"
-              />
-            </div>
+            <FormField
+              id="username"
+              label="Nom d'utilisateur"
+              placeholder="Votre nom d'utilisateur"
+              value={username}
+              onChange={setUsername}
+              required
+              disabled={!!generatedPassword}
+              className="disabled:opacity-100"
+            />
 
-            {generatedPassword && qrCode && (
+            {generatedPassword && passwordQrCode && totpQrCode && (
               <div className="flex flex-col gap-4">
                 <Alert className="border-green-500 bg-green-100">
                   <AlertDescription className="text-green-950">
@@ -114,32 +103,21 @@ export function RegisterForm({
                 {/* QR Code Display Toggle */}
                 <div className="flex flex-col items-center gap-6 pb-3">
                   {step === 1 && (
-                    <div className="flex flex-col items-center gap-2">
-                      <Label>Mot de passe</Label>
-                      <img
-                        src={qrCode}
-                        alt="QR Code du mot de passe"
-                        className="w-48 h-48"
-                      />
-                    </div>
+                    <QRCodeDisplay
+                      label="Mot de passe"
+                      qrCode={passwordQrCode}
+                      alt="QR Code du mot de passe"
+                      secret={generatedPassword ?? undefined}
+                    />
                   )}
 
-                  {step === 2 && totpQrCode && (
-                    <div className="flex flex-col items-center gap-2">
-                      <Label>Code secret 2FA</Label>
-                      <img
-                        src={totpQrCode}
-                        alt="QR Code 2FA"
-                        className="w-48 h-48"
-                      />
-                      {totpSecret && (
-                        <div>
-                          <code className="p-1 bg-gray-200 rounded text-sm">
-                            {totpSecret}
-                          </code>
-                        </div>
-                      )}
-                    </div>
+                  {step === 2 && (
+                    <QRCodeDisplay
+                      label="Code secret 2FA"
+                      qrCode={totpQrCode}
+                      alt="QR Code 2FA"
+                      secret={totpSecret ?? undefined}
+                    />
                   )}
 
                   {step === 2 && totpMutation.isPending && !totpQrCode && (
@@ -148,21 +126,13 @@ export function RegisterForm({
                     </div>
                   )}
 
-                  {/* Step Navigation Buttons */}
-                  <div className="flex gap-4">
-                    {step === 2 && (
-                      <Button variant="secondary" onClick={() => setStep(1)}>
-                        <ArrowLeft className="w-4 h-4" />
-                        Retour
-                      </Button>
-                    )}
-                    {step === 1 && totpQrCode && (
-                      <Button onClick={() => setStep(2)}>
-                        Suivant
-                        <ArrowRight className="w-4 h-4" />
-                      </Button>
-                    )}
-                  </div>
+                  <StepNavigation
+                    currentStep={step}
+                    totalSteps={2}
+                    onPrevious={() => setStep(1)}
+                    onNext={() => setStep(2)}
+                    canGoNext={!!totpQrCode}
+                  />
                 </div>
 
                 <Button onClick={onLoginClick}>
