@@ -26,6 +26,13 @@ export interface GeneratePasswordResponse {
   qr: string;
 }
 
+export class ApiError extends Error {
+  constructor(message: string, public statusCode: number) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
 // User login
 export async function loginUser(data: LoginRequest): Promise<void> {
   const response = await fetch(
@@ -54,12 +61,11 @@ export async function loginUser(data: LoginRequest): Promise<void> {
         errorMessage = "Code 2FA invalide";
         break;
       case 403:
-        errorMessage =
-          "Mot de passe expiré, il faut générer un nouveau mot de passe";
+        errorMessage = "Mot de passe expiré";
         break;
     }
 
-    throw new Error(errorMessage);
+    throw new ApiError(errorMessage, errorCode);
   }
 }
 
@@ -90,8 +96,7 @@ export async function generate2FA(
         errorMessage = "Erreur serveur";
         break;
     }
-
-    throw new Error(errorMessage);
+    throw new ApiError(errorMessage, errorCode);
   }
 
   return await response.json();
@@ -115,14 +120,13 @@ export async function generatePassword(
   if (!response.ok) {
     const errorCode = response.status;
     let errorMessage = "Une erreur est survenue";
-
+    
     switch (errorCode) {
       case 400:
         errorMessage = "Il manque un paramètre";
         break;
     }
-
-    throw new Error(errorMessage);
+    throw new ApiError(errorMessage, errorCode);
   }
 
   return await response.json();

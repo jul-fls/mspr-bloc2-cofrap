@@ -5,9 +5,9 @@ interface FormFieldProps {
   id: string;
   label: string;
   type?: string;
-  placeholder: string;
+  placeholder?: string;
   value: string;
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
   required?: boolean;
   disabled?: boolean;
   className?: string;
@@ -32,7 +32,7 @@ export function FormField({
         type={type}
         placeholder={placeholder}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={onChange ? (e) => onChange(e.target.value) : undefined}
         required={required}
         disabled={disabled}
         className={className}
