@@ -5,8 +5,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { generatePassword, generate2FA } from "@/lib/api";
 import { QRCodeDisplay } from "./qr-code-display";
 import { StepNavigation } from "./step-navigation";
-import { FormField } from "./form-field";
-import { ErrorAlert } from "../common/error-alert";
+import { FormField } from "./field";
+import { ErrorAlert } from "../error-alert";
 
 interface PasswordGenerationProps {
   username: string;

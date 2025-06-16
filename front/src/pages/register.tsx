@@ -4,10 +4,10 @@ import { useMutation } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { generatePassword } from "@/lib/api";
-import { FormHeader } from "./form/form-header";
-import { FormField } from "./form/form-field";
-import { PasswordGeneration } from "./form/password-generation";
-import { ErrorAlert } from "./common/error-alert";
+import { FormHeader } from "../components/form/header";
+import { FormField } from "../components/form/field";
+import { PasswordGeneration } from "../components/form/password-generation";
+import { ErrorAlert } from "../components/error-alert";
 
 interface RegisterFormProps extends React.ComponentProps<"div"> {
   onLoginClick?: () => void;

@@ -121,10 +121,8 @@ export async function generatePassword(
     const errorCode = response.status;
     let errorMessage = "Une erreur est survenue";
     
-    switch (errorCode) {
-      case 400:
-        errorMessage = "Il manque un paramètre";
-        break;
+    if (errorCode === 400) {
+      errorMessage = "Il manque un paramètre";
     }
     throw new ApiError(errorMessage, errorCode);
   }
