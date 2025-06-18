@@ -1,2 +1,3 @@
 [![Deploy OpenFaaS Functions](https://github.com/jul-fls/mspr-bloc2-cofrap/actions/workflows/deploy.yml/badge.svg)](https://github.com/jul-fls/mspr-bloc2-cofrap/actions/workflows/deploy.yml)
+
 # mspr-bloc2-cofrap
