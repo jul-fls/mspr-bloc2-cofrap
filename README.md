@@ -41,3 +41,35 @@ Ce projet propose un système d'authentification simple basé sur [OpenFaaS](htt
 * `functions/` contient les fonctions déployables, chacune avec un `handler.js` et un fichier `.yaml` OpenFaaS.
 * `tools/` regroupe les scripts Bash pour l'initialisation de la base PostgreSQL, le déploiement manuel des fonctions, etc.
 * `front/` propose une interface basique permettant de se connecter, de générer des mots de passe ou un 2FA.
+
+## 🚀 Utilisation en production
+
+L'instance de production est disponible ici :
+➡️ **[https://cofrap.flusin.fr](https://cofrap.flusin.fr)**
+
+Les fonctions OpenFaaS sont exposées sous :
+➡️ **[https://openfaas.flusin.fr/function/](https://openfaas.flusin.fr/function/)** (ex: `/generate-password`)
+
+## 🧑‍💻 Bonnes pratiques de développement
+
+* **Branche par fonctionnalité** : créez une branche nommée `feature/<nom>` pour chaque nouvelle fonctionnalité ou amélioration.
+
+* **Validation automatique** : toute fusion dans `master` déclenche automatiquement la CI/CD via GitHub Actions (build, push, déploiement).
+
+* **Développement local** :
+
+  * Cloner le dépôt
+  * Installer les dépendances du frontend :
+
+    ```bash
+    cd frontend
+    npm install
+    npm run dev
+    ```
+  * Pour déployer manuellement une fonction depuis `tools/` :
+
+    ```bash
+    ./update-function.sh generate-password
+    ```
+
+* **Secrets OpenFaaS** : les identifiants de la base PostgreSQL sont stockés dans des secrets Kubernetes (namespace `openfaas`).
