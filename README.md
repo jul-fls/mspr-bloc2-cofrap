@@ -73,3 +73,7 @@ Les fonctions OpenFaaS sont exposées sous :
     ```
 
 * **Secrets OpenFaaS** : les identifiants de la base PostgreSQL sont stockés dans des secrets Kubernetes (namespace `openfaas`).
+
+## 🧪 Tests et débogage
+
+* Un script `debug-function.sh` est disponible pour tester manuellement l’exécution des fonctions dans le cluster OpenFaaS.
