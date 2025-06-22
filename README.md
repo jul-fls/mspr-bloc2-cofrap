@@ -30,7 +30,7 @@ Ce projet propose un système d'authentification simple basé sur [OpenFaaS](htt
 
 ```txt
 .
-├── functions/              # Fonctions OpenFaaS (auth-user, generate-password, generate-2fa)
+├── functions/              # Fonctions OpenFaaS (auth-user, generate-password, generate-2fa, upload-profile-photo)
 ├── tools/                  # Scripts de déploiement et d'administration (update-function.sh, init-db.sh, etc.)
 ├── README.md               # Ce fichier
 ├── LICENSE
@@ -40,7 +40,7 @@ Ce projet propose un système d'authentification simple basé sur [OpenFaaS](htt
 
 * `functions/` contient les fonctions déployables, chacune avec un `handler.js` et un fichier `.yaml` OpenFaaS.
 * `tools/` regroupe les scripts Bash pour l'initialisation de la base PostgreSQL, le déploiement manuel des fonctions, etc.
-* `front/` propose une interface basique permettant de se connecter, de générer des mots de passe ou un 2FA.
+* `front/` propose une interface basique permettant de se connecter, de générer des mots de passe, un 2FA ou de téléverser une photo de profil.
 
 ## 🚀 Utilisation en production
 
