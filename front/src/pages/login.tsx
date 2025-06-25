@@ -9,6 +9,7 @@ import { FormHeader } from "../components/form/header";
 import { FormField } from "../components/form/field";
 import { PasswordGeneration } from "../components/form/password-generation";
 import { ErrorAlert } from "../components/error-alert";
+import FieldTOTP from "@/components/form/field-totp";
 
 interface LoginFormProps extends React.ComponentProps<"div"> {
   onRegisterClick?: () => void;
@@ -108,10 +109,9 @@ export function LoginForm({
               required
             />
 
-            <FormField
+            <FieldTOTP
               id="totp"
               label="Code d'authentification (2FA)"
-              placeholder="Entrez le code 2FA"
               value={totp}
               onChange={setTotp}
               required
