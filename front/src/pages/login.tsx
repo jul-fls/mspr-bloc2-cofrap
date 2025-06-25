@@ -77,15 +77,15 @@ export function LoginForm({
   // Formulaire de connexion classique
   return (
     <div className={cn("flex flex-col gap-6 m-5", className)} {...props}>
+      <FormHeader
+        title="Se connecter"
+        linkText="Vous n'avez pas de compte ?"
+        linkLabel="Créer un compte"
+        onLinkClick={onRegisterClick}
+      />
+
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
-          <FormHeader
-            title="Se connecter"
-            linkText="Vous n'avez pas de compte ?"
-            linkLabel="Créer un compte"
-            onLinkClick={onRegisterClick}
-          />
-
           <ErrorAlert error={loginMutation.error} />
 
           <div className="flex flex-col gap-6">

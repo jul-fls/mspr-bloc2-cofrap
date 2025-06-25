@@ -57,15 +57,15 @@ export function RegisterForm({
 
   return (
     <div className={cn("flex flex-col gap-6 m-5", className)} {...props}>
+      <FormHeader
+        title="S'inscrire"
+        linkText="Vous avez déjà un compte ?"
+        linkLabel="Se connecter"
+        onLinkClick={onLoginClick}
+      />
+
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
-          <FormHeader
-            title="S'inscrire"
-            linkText="Vous avez déjà un compte ?"
-            linkLabel="Se connecter"
-            onLinkClick={onLoginClick}
-          />
-
           <ErrorAlert error={registerMutation.error} />
 
           <div className="flex flex-col gap-6">
